@@ -11,7 +11,7 @@ class Config(object):
 
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_BINDS = {
-        "songs": "mysql+pymysql://root:12345@localhost/song"
+        "songs": "mysql+pymysql://root:12345@192.168.55.121/songs"
     }
 
     DIR_SONG_TEXTS = "/home/urev/Downloads/Songs data/Lyrics.net_2013-05/texts"
