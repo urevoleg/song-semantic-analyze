@@ -14,8 +14,6 @@ class Config(object):
         "songs": "mysql+pymysql://root:12345@192.168.55.121/songs"
     }
 
-    DIR_SONG_TEXTS = "/home/urev/Downloads/Songs data/Lyrics.net_2013-05/texts"
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     BASE_DIR = basedir
