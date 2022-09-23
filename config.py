@@ -10,6 +10,9 @@ class Config(object):
     SECRET_KEY = os.getenv('SECRET_KEY') or 'you-will-never-guess'
 
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_BINDS = {
+        "songs": "mysql+pymysql://root:12345@localhost/song"
+    }
 
     DIR_SONG_TEXTS = "/home/urev/Downloads/Songs data/Lyrics.net_2013-05/texts"
 
