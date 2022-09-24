@@ -17,7 +17,7 @@ from sklearn.pipeline import Pipeline
 
 from app import logger, db
 from app.models import Text, Song
-from app.sources import SourceSong
+from app.sources import SourceSong, MostFreqArtist
 
 from sqlalchemy import or_
 
@@ -63,7 +63,8 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
     def tokenize(self, text: str) -> List[str]:
         text = text.lower()
         for token in word_tokenize(text):
-            yield self.stemmer.stem(token)
+            yield token
+            #yield self.stemmer.stem(token)
 
     def lemmantize(self, token):
         return self.lemmantizer.lemmatize(token)
@@ -101,8 +102,8 @@ class TopicModels():
         if vect == 'count':
             self.vectorizer = CountVectorizer(preprocessor=None, lowercase=False)
         if vect == 'tfidf':
-            self.vectorizer = TfidfVectorizer(lowercase=False, ngram_range=(1, 2),
-                                              max_df=0.25, min_df=0.1, max_features=100)
+            self.vectorizer = TfidfVectorizer(lowercase=False, ngram_range=(1, 3),
+                                              max_df=0.25, min_df=0, max_features=500)
 
         self.model = Pipeline([
             ("norm", TextNormalizer(language=self.language)),
@@ -146,15 +147,11 @@ class SongCorpusReader():
 if __name__ == '__main__':
     logger.info(dt.datetime.now())
     n_topics = 2
-    corpus = SongCorpusReader(list_of_song_id=set([1805]),
-                              list_of_artist_id=set([
-                                  436648, 55403, 39218, 56197,
-                                  40809, 13262, 4887, 12973, 12968,
-                                  15704, 17912, 19883, 9941, 44161,
-                                  48537, 22348
-                              ])).get_text()
+    most_freq_artists = db.session.query(MostFreqArtist.artist_id)
+    corpus = SongCorpusReader().get_text()
 
-    """normalizer = TextNormalizer()
+    """
+    normalizer = TextNormalizer()
     normalized_corpus = [*normalizer.fit_transform(corpus)]
     print(normalized_corpus)
 
@@ -163,7 +160,7 @@ if __name__ == '__main__':
     print(vectorized_corpus)
     print(vectorizer.get_feature_names_out())"""
 
-    lsa = TopicModels(n_topics=n_topics, estimator='LSA', language='russian', vect='tfidf')
+    lsa = TopicModels(n_topics=n_topics, estimator='LSA', language='english', vect='tfidf')
     lsa.fit_transform(corpus)
 
     print(lsa.model.named_steps['model'].components_.shape, lsa.trancated_corpus.shape)
@@ -178,7 +175,7 @@ if __name__ == '__main__':
 
     fig, ax = plt.subplots(figsize=(9, 6))
     sns.despine(ax=ax)
-    ax.plot(lsa.trancated_corpus[:, 0], lsa.trancated_corpus[:, 1], marker='s', ms=5, ls='none', alpha=0.5)
+    ax.plot(lsa.trancated_corpus[:, 0], lsa.trancated_corpus[:, 1], marker='s', ms=5, ls='none', alpha=0.125)
     ax.grid(axis="both", lw=0.25, color='grey')
     plt.show()
 

@@ -24,3 +24,10 @@ class SourceSong(db.Model):
     view_last_time = db.Column(db.DateTime, comment='Дата')
     skipped = db.Column(db.Integer)
     archived = db.Column(db.Integer)
+
+
+class MostFreqArtist(db.Model):
+    __tablename__ = "most_freq_artists"
+    __bind_key__ = 'songs'
+
+    artist_id = db.Column(db.Integer, primary_key=True)
