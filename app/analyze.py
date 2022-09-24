@@ -88,7 +88,7 @@ class TextNormalizer(BaseEstimator, TransformerMixin):
 
 class TopicModels():
 
-    def __init__(self, n_topics=2, estimator='LSA', language='english'):
+    def __init__(self, n_topics=2, estimator='LSA', language='english', vect='count'):
         self.n_topics = n_topics
         self.language = language
         if estimator == 'LSA':
@@ -98,9 +98,15 @@ class TopicModels():
         if estimator == 'NMF':
             self.estimator = NMF(n_components=self.n_topics, random_state=88)
 
+        if vect == 'count':
+            self.vectorizer = CountVectorizer(preprocessor=None, lowercase=False)
+        if vect == 'tfidf':
+            self.vectorizer = TfidfVectorizer(lowercase=False, ngram_range=(1, 2),
+                                              max_df=0.25, min_df=0.1, max_features=100)
+
         self.model = Pipeline([
             ("norm", TextNormalizer(language=self.language)),
-            ("vect", CountVectorizer(preprocessor=None, lowercase=None)),
+            ("vect", self.vectorizer),
             ("model", self.estimator)
         ], verbose=1)
 
@@ -124,7 +130,7 @@ class TopicModels():
 class SongCorpusReader():
     def __init__(self,
                  list_of_song_id=set([1805, 286528, 367965, 256283, 105489]),
-                 list_of_artist_id=set([])):
+                 list_of_artist_id=set([43020])):
         self.list_of_song_id = list_of_song_id
         self.list_of_artist_id = list_of_artist_id
 
@@ -157,7 +163,7 @@ if __name__ == '__main__':
     print(vectorized_corpus)
     print(vectorizer.get_feature_names_out())"""
 
-    lsa = TopicModels(n_topics=n_topics, estimator='LSA')
+    lsa = TopicModels(n_topics=n_topics, estimator='LSA', language='russian', vect='tfidf')
     lsa.fit_transform(corpus)
 
     print(lsa.model.named_steps['model'].components_.shape, lsa.trancated_corpus.shape)
