@@ -9,3 +9,13 @@ pymysql
 python-dotenv
 
 tqdm
+
+# nlp
+nltk
+sklearn
+
+# analyze
+pandas
+numpy
+matplotlib
+seaborn
