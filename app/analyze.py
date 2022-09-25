@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
     fig, ax = plt.subplots(figsize=(9, 6))
     sns.despine(ax=ax)
-    ax.plot(lsa.trancated_corpus[:, 0], lsa.trancated_corpus[:, 1], marker='s', ms=5, ls='none', alpha=0.25)
+    ax.plot(lsa.trancated_corpus[:, 0], lsa.trancated_corpus[:, 1], marker='s', ms=5, ls='none', alpha=0.125)
     ax.grid(axis="both", lw=0.25, color='grey')
     plt.show()
 
